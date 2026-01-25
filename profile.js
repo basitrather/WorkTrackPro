@@ -18,9 +18,10 @@ const passwordHint = document.getElementById("passwordHint");
 })();
 
 const resetPassword = async function () {
-  let { data, error } = await supabase.auth.resetPasswordForEmail(
-    userEmail.value,
-  );
+  // let { data, error } = await supabase.auth.resetPasswordForEmail(
+  //   userEmail.value,
+  // );
+  window.location.href = "resetProfile.html";
   console.log(data);
 };
 changePasswordLink.addEventListener("click", function () {

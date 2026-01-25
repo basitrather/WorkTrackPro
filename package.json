@@ -5,7 +5,7 @@
   "license": "ISC",
   "author": "",
   "scripts": {
-    "start": "parcel index.html login.html profile.html resetPass.html",
+    "start": "parcel index.html login.html profile.html resetPass.html resetProfile.html",
     "build": "parcel build index.html"
   },
   "dependencies": {
@@ -16,5 +16,15 @@
     "domain-browser": "^5.7.0",
     "events": "^3.3.0",
     "parcel": "^2.16.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/basitrather/WorkTrackPro.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/basitrather/WorkTrackPro/issues"
+  },
+  "homepage": "https://github.com/basitrather/WorkTrackPro#readme"
 }
