@@ -1,0 +1,20 @@
+{
+  "name": "worktrackpro",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "start": "parcel index.html login.html profile.html resetPass.html",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.91.1"
+  },
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "domain-browser": "^5.7.0",
+    "events": "^3.3.0",
+    "parcel": "^2.16.3"
+  }
+}
