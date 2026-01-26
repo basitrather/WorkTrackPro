@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <title>WORK TRACK PRO</title>
+    <link rel="stylesheet" href="/Styling Files/style.css" />
+    <script type="module" defer src="/Javascript Files/signUp.js"></script>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Create Account</h2>
+      <p class="msg"></p>
+      <form id="signupForm">
+        <div class="input-group">
+          <label>Full Name</label>
+          <input
+            type="text"
+            placeholder="Enter your FullName"
+            value=""
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value=""
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="Create a password"
+            value=""
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            placeholder="Create a password"
+            value=""
+            required
+          />
+        </div>
+
+        <button class="submit" type="submit">Sign Up</button>
+
+        <p class="signup-text">
+          Already have an account? <a href="/index.html">Login</a>
+        </p>
+      </form>
+    </div>
+  </body>
+</html>

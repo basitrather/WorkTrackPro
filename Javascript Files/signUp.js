@@ -29,7 +29,7 @@ const signUp = async (name, email, pass) => {
         },
       },
     });
-
+    console.log(response);
     //To generate error messege on DOM
     if (
       response.error?.code === "user_already_exists" &&
@@ -39,10 +39,10 @@ const signUp = async (name, email, pass) => {
 
     //Redirect user to Login Page
     if (response.data.user) {
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
     // Insert rows in tables
-    const { data, error } = await supabase
+    const create = await supabase
       .from("user_roles")
       .insert([{ user_id: response.data.session.user.id }])
       .select();

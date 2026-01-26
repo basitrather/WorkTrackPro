@@ -1,5 +1,14 @@
 import { supabase } from "./supabase";
-
+// document.addEventListener("load", called);
+(async function () {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  console.log(user);
+  if (user) {
+    window.location.href = "profile.html";
+  }
+})();
 //Selectors
 const loginForm = document.getElementById("loginForm");
 const emailInput = loginForm.querySelector('input[type="email"]');
@@ -38,14 +47,22 @@ const login = async function (email, password) {
 };
 
 forgotPasswordBtn.addEventListener("click", function () {
+  if (emailInput.value === "") {
+    errorMsg.textContent = "Please enter the email first";
+    return;
+  }
   const userEmail = emailInput.value;
   forgotPassword(userEmail);
 });
 
 loginForm.addEventListener("submit", function (e) {
   e.preventDefault();
-  errorMsg.textContent = "";
   const userEmail = emailInput.value;
   const userPassword = passwordInput.value;
+  errorMsg.textContent = "";
   login(userEmail, userPassword);
+});
+
+emailInput.addEventListener("click", function () {
+  errorMsg.textContent = "";
 });
