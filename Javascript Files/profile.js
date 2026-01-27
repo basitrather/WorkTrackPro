@@ -30,14 +30,19 @@ const userEmail = document.getElementById("userEmailInput");
 const changePasswordLink = document.getElementById("changePasswordLink");
 const logOutBtn = document.querySelector(".logout-btn");
 const navUserName = document.querySelector(".nav-user-name");
-const ProfileSection = document.querySelector(".profile-section");
+const ProfileContainer = document.querySelector(".profile-section");
 const sideBar = document.querySelector(".sidebar-menu");
 const topBar = document.querySelector(".stats");
 const sideBarOpts = document.querySelectorAll("ul li");
 const totaluserCount = document.querySelector(".totalusers");
+const userProfilesBtn = document.querySelector(".userProfiles");
+const dashBoardBtn = document.querySelector(".dashBoard");
 
 //Show content Function
-const showContent = function (event) {};
+const toggleContent = function () {
+  ProfileContainer.classList.toggle("showView");
+  topBar.classList.toggle("hideView");
+};
 
 //Logout Function
 const logOut = async function () {
@@ -70,5 +75,11 @@ sideBar.addEventListener("click", function (e) {
     }
   });
   btnClicked.classList.add("active");
-  showContent(btnClicked);
+});
+
+userProfilesBtn.addEventListener("click", function (e) {
+  toggleContent();
+});
+dashBoardBtn.addEventListener("click", function () {
+  toggleContent();
 });

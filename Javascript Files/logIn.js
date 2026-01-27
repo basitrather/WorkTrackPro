@@ -4,7 +4,6 @@ import { supabase } from "./supabase";
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log(user);
   if (user) {
     window.location.href = "profile.html";
   }
