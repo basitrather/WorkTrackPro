@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-
+import { generate } from "generate-password";
 //IFIE functions
 (async function () {
   const {
@@ -37,7 +37,57 @@ const sideBarOpts = document.querySelectorAll("ul li");
 const totaluserCount = document.querySelector(".totalusers");
 const userProfilesBtn = document.querySelector(".userProfiles");
 const dashBoardBtn = document.querySelector(".dashBoard");
+const primaryBtn = document.querySelector(".primary-btn");
+const selectBtn = document.querySelector(".new-user-role");
 
+//Generate password Function
+const generatepassword = function () {
+  let generator = require("generate-password");
+
+  let password = generator.generate({
+    length: 10,
+    numbers: true,
+  });
+  return password;
+};
+
+//Create new user Function
+const createUser = async function () {
+  const newUserName = document.querySelector(".new-user-name").value;
+  const newEmail = document.querySelector(".new-email").value;
+  // const usertype = document.
+  const password = generatepassword();
+  try {
+    //Create new user
+    let createUserRequest = await supabase.auth.signUp({
+      email: newEmail,
+      password: password,
+      options: {
+        data: {
+          display_name: newUserName,
+        },
+      },
+    });
+
+    // Send user email for password reset
+    let resetPassRequest = await supabase.auth.resetPasswordForEmail(newEmail, {
+      redirectTo: "http://localhost:1234/resetPass.html",
+    });
+
+    //Add user into tables
+    const addUserToTabe = await supabase
+      .from("user_roles")
+      .insert([
+        {
+          user_id: createUserRequest.data.session.user.id,
+          role: selectBtn.value,
+        },
+      ])
+      .select();
+  } catch (error) {
+    console.log(error);
+  }
+};
 //Show content Function
 const toggleContent = function () {
   ProfileContainer.classList.toggle("showView");
@@ -82,4 +132,9 @@ userProfilesBtn.addEventListener("click", function (e) {
 });
 dashBoardBtn.addEventListener("click", function () {
   toggleContent();
+});
+primaryBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  // const event = e.target;
+  createUser();
 });

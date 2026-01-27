@@ -56,6 +56,49 @@
               <p>8</p>
             </div>
           </section>
+          <div class="user-management">
+            <!-- Section 1 : Create User -->
+            <section class="card create-user">
+              <h2>Create User</h2>
+
+              <div class="form-group">
+                <label>Full Name</label>
+                <input class="new-user-name" type="text" placeholder="" />
+              </div>
+
+              <div class="form-group">
+                <label>Email / Phone Number</label>
+                <input class="new-email" type="email" placeholder="" />
+              </div>
+
+              <!-- NEW SELECT FIELD -->
+              <div class="form-group">
+                <label>Role</label>
+                <select class="new-user-role">
+                  <option value="user">User</option>
+                  <option value="co_admin">Co-Admin</option>
+                </select>
+              </div>
+
+              <button class="primary-btn">Create User</button>
+            </section>
+
+            <!-- Section 2 : Created Users Record -->
+            <section class="card users-record">
+              <h2>Created Users</h2>
+
+              <div class="user-box">
+                <span>John Doe</span>
+                <small>john@example.com</small>
+              </div>
+            </section>
+
+            <!-- Section 3 : Placeholder (future use) -->
+            <section class="card info-panel">
+              <h2>User Info</h2>
+              <p>Select a user to see details.</p>
+            </section>
+          </div>
 
           <!-- Profile Card (Original Structure Kept) -->
           <section class="profile-section">

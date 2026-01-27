@@ -44,7 +44,7 @@ const signUp = async (name, email, pass) => {
     // Insert rows in tables
     const create = await supabase
       .from("user_roles")
-      .insert([{ user_id: response.data.session.user.id }])
+      .insert([{ user_id: response.data.session.user.id, role: "user" }])
       .select();
   } catch (error) {
   } finally {
