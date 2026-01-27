@@ -100,27 +100,67 @@ body {
   place-items: center;
 }
 
-.logout-btn {
+/* .logout-btn {
   border: none;
   background: transparent;
   cursor: pointer;
+  font-size: 1rem;
+  letter-spacing: 1px;
   font-weight: 500;
-}
+  background-color: #9c27b0;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 10px;
+} */
 
+/* CSS */
+.logout-btn {
+  background-image: linear-gradient(#b24ff4, #bd3cd4);
+  border: 1px solid #9c27b0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  direction: ltr;
+  display: block;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  font-weight: 500;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.47059;
+  min-width: 30px;
+  overflow: visible;
+  padding: 4px 15px;
+  text-align: center;
+  vertical-align: baseline;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
 /* Content */
 .content {
+  height: 80%;
   padding: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
 }
 
 /* Stats */
 .stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
   gap: 20px;
-  margin-bottom: 30px;
 }
 
 .stat-card {
+  flex-grow: 1;
+  text-align: center;
   background: var(--card);
   border-radius: var(--radius);
   padding: 20px;
@@ -150,6 +190,7 @@ body {
 
 /* Profile */
 .profile-section {
+  display: none;
   max-width: 500px;
 }
 
@@ -187,4 +228,11 @@ body {
 .hint {
   font-size: 0.75rem;
   color: var(--muted);
+}
+
+.showView {
+  display: flex;
+}
+.hideView {
+  display: none;
 }
