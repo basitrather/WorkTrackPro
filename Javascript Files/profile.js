@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import { generate } from "generate-password";
+
 //IFIE functions
 (async function () {
   const {
@@ -39,7 +40,30 @@ const userProfilesBtn = document.querySelector(".userProfiles");
 const dashBoardBtn = document.querySelector(".dashBoard");
 const primaryBtn = document.querySelector(".primary-btn");
 const selectBtn = document.querySelector(".new-user-role");
+const createUserSection = document.querySelector(".user-management");
+const displayUsersContainer = document.querySelector(".users-record");
 
+//Display users to dashboard admin panel
+const displayUsers = async function (params) {
+  //Get user details
+  let { data: user_roles, error } = await supabase
+    .from("user_roles")
+    .select("*");
+  console.log(user_roles);
+  user_roles.forEach((user, index) => {
+    displayUsersContainer.insertAdjacentHTML(
+      "beforeend",
+      `<div class="user-box user-row">
+     <span class="user-name">John Doe</span>
+     <span class="assigned-task">0</span>
+     <span class="pending-task">0</span>
+     <span class="completed-task">0</span>
+     <span class="user-role">${user.role}</span>
+   </div>`,
+    );
+  });
+};
+displayUsers();
 //Generate password Function
 const generatepassword = function () {
   let generator = require("generate-password");
@@ -88,10 +112,12 @@ const createUser = async function () {
     console.log(error);
   }
 };
-//Show content Function
+
+//Show/Hide dashboard content
 const toggleContent = function () {
   ProfileContainer.classList.toggle("showView");
   topBar.classList.toggle("hideView");
+  createUserSection.classList.toggle("hideView");
 };
 
 //Logout Function
@@ -108,9 +134,11 @@ const resetPassword = async function () {
   window.location.href = "resetProfile.html";
 };
 
+//Eventlistners
 changePasswordLink.addEventListener("click", function () {
   resetPassword();
 });
+
 logOutBtn.addEventListener("click", function () {
   logOut();
 });
@@ -130,11 +158,12 @@ sideBar.addEventListener("click", function (e) {
 userProfilesBtn.addEventListener("click", function (e) {
   toggleContent();
 });
+
 dashBoardBtn.addEventListener("click", function () {
   toggleContent();
 });
+
 primaryBtn.addEventListener("click", function (e) {
   e.preventDefault();
-  // const event = e.target;
   createUser();
 });

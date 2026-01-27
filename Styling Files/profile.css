@@ -232,6 +232,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  max-width: 1000px;
   background: var(--card);
   border-radius: var(--radius);
   padding: 24px;
@@ -336,6 +337,58 @@ body {
     5px 5px,
     5px 5px;
   background-repeat: no-repeat;
+}
+/* Log styling */
+/* ===== USERS RECORD TABLE FIX ===== */
+
+.users-record {
+  width: 100%;
+  max-width: 1000px;
+  overflow-x: auto;
+}
+
+/* override centering from .card */
+.users-record.card {
+  align-items: stretch;
+}
+
+/* header row */
+.user-row-head {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* actual user rows */
+.user-row.user-box {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+/* FIX: undo block behavior */
+.user-row.user-box span {
+  display: inline;
+}
+
+/* hover */
+.user-row.user-box:hover {
+  background: #f9fafb;
+}
+
+/* role highlight */
+.user-role {
+  font-weight: 600;
+  color: #9c27b0;
 }
 
 .showView {
