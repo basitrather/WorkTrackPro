@@ -49,12 +49,12 @@ const createUserHTML = function (user) {
   displayUsersContainer.insertAdjacentHTML(
     "beforeend",
     `<div class="user-box user-row">
-     <span class="user-name">John Doe</span>
-     <span class="assigned-task">0</span>
-     <span class="pending-task">0</span>
-     <span class="completed-task">0</span>
+     <span class="user-name">${user.display_name}</span>
+     <span class="contact-info">${user.email}</span>
+     <span class="status">-</span>
+     <span class="acc-creation-date">${user.created_at}</span>
      <span class="user-role">${user.role}</span>
-     <span>Edit</span>
+     <span style="color: #007bff; cursor:pointer">Edit</span>
    </div>`,
   );
 };
@@ -67,6 +67,7 @@ const displayUsers = async function (params) {
     .select("*");
   user_roles.forEach((user, index) => {
     createUserHTML(user);
+    console.log(user.created_at);
   });
 };
 displayUsers();
@@ -113,12 +114,12 @@ const createUser = async function () {
         },
       },
     });
-
+    console.log(createUserRequest);
     // Send user email for password reset
     let resetPassRequest = await supabase.auth.resetPasswordForEmail(newEmail, {
       redirectTo: "http://localhost:1234/resetPass.html",
     });
-
+    console.log(createUserRequest.data.user.created_at);
     //Add user into tables
     const addUserToTabe = await supabase
       .from("user_roles")
@@ -128,9 +129,11 @@ const createUser = async function () {
           role: selectBtn.value,
           display_name: newUserName,
           email: newEmail,
+          created_at: createUserRequest.data.user.created_at,
         },
       ])
       .select();
+    console.log(addUserToTabe);
   } catch (error) {
     console.log(error);
   }

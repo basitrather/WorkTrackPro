@@ -392,7 +392,7 @@ select:focus {
 /* actual user rows */
 .user-row.user-box {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
   align-items: center;
   padding: 12px 14px;
   border-radius: 10px;
@@ -400,6 +400,9 @@ select:focus {
   border: 1px solid #e5e7eb;
   margin-bottom: 10px;
   font-size: 0.9rem;
+}
+.user-row.user-box:nth-last-child {
+  color: blue;
 }
 
 .user-row.user-box span {

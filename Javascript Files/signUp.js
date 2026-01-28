@@ -29,14 +29,16 @@ const signUp = async (name, email, pass) => {
         },
       },
     });
-
+    console.log(response);
     const addToUserRolesTable = await supabase
       .from("user_roles")
       .insert([
         {
-          user_id: createUserRequest.data.session.user.id,
+          user_id: response.data.session.user.id,
+          role: "user",
           display_name: name,
           email: email,
+          created_at: response.data.user.created_at,
         },
       ])
       .select();
@@ -52,12 +54,8 @@ const signUp = async (name, email, pass) => {
     if (response.data.user) {
       window.location.href = "index.html";
     }
-    // Insert rows in tables
-    const create = await supabase
-      .from("user_roles")
-      .insert([{ user_id: response.data.session.user.id, role: "user" }])
-      .select();
   } catch (error) {
+    console.error(error);
   } finally {
     submitBtn.disabled = false;
     submitBtn.classList.remove("notAllow");
