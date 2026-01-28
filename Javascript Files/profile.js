@@ -43,6 +43,7 @@ const selectBtn = document.querySelector(".new-user-role");
 const createUserSection = document.querySelector(".user-management");
 const displayUsersContainer = document.querySelector(".user-box");
 const searchBar = document.querySelector(".searchBar");
+const sortBtn = document.querySelector(".sort");
 
 // Create user HTML Function
 const createUserHTML = function (user) {
@@ -58,34 +59,88 @@ const createUserHTML = function (user) {
    </div>`,
   );
 };
+//Sort Array
+const sortByNameAsc = (userArray, sortUsersBy) => {
+  return [...userArray].sort((a, b) =>
+    a[sortUsersBy].localeCompare(b[sortUsersBy]),
+  );
+};
+
+//Display Sorted Users Function
+const sortUsers = async function (sortby) {
+  try {
+    let { data: user_roles, error } = await supabase
+      .from("user_roles")
+      .select("*");
+    console.log(user_roles);
+    // Clear already displayed users
+    displayUsersContainer.replaceChildren();
+
+    //Sort by date
+    if (sortby === "created_at") {
+      const sortByDateAsc = (arr, key) => {
+        return [...arr].sort((a, b) => {
+          const timeA = Date.parse(a[key]); // safe for YYYY-MM-DD
+          const timeB = Date.parse(b[key]);
+          return timeA - timeB;
+        });
+      };
+      const sortedUsersbyDate = sortByDateAsc(user_roles, sortby);
+      sortedUsersbyDate.forEach((element) => {
+        createUserHTML(element);
+      });
+      return;
+    }
+
+    //Sort by name,role,status
+    const sortedUsers = sortByNameAsc(user_roles, sortby.toLowerCase());
+    sortedUsers.forEach((element) => {
+      createUserHTML(element);
+    });
+  } catch {}
+};
 
 //Display users to dashboard admin panel
 const displayUsers = async function (params) {
+  if (params) {
+    createUserHTML(params);
+    return;
+  }
   //Get user details
   let { data: user_roles, error } = await supabase
     .from("user_roles")
     .select("*");
-  user_roles.forEach((user, index) => {
-    createUserHTML(user);
-    console.log(user.created_at);
+
+  //Sort by given value
+  const sortedUsers = sortByNameAsc(user_roles, "display_name");
+  sortedUsers.forEach((element) => {
+    createUserHTML(element);
   });
 };
 displayUsers();
 
 //FilterUser
-const filterUser = async function (role) {
+const filterUser = async function (search) {
   try {
     let { data: user_roles, error } = await supabase
       .from("user_roles")
       .select("*");
-    if (!role) return;
+    if (!search) return;
     displayUsersContainer.replaceChildren();
     user_roles.forEach((user) => {
-      if (user.role === role) {
-        createUserHTML(user);
+      if (user.display_name.toLowerCase() == search) {
+        displayUsers(user);
+      }
+      if (user.email == search) {
+        displayUsers(user);
+      }
+      if (user.role == search) {
+        displayUsers(user);
       }
     });
-  } catch {}
+  } catch (error) {
+    console.error(error);
+  }
 };
 //Generate password Function
 const generatepassword = function () {
@@ -133,7 +188,8 @@ const createUser = async function () {
         },
       ])
       .select();
-    console.log(addUserToTabe);
+    displayUsers(addUserToTabe.data[0]);
+    sortUsers(sortBtn.value);
   } catch (error) {
     console.log(error);
   }
@@ -196,6 +252,15 @@ primaryBtn.addEventListener("click", function (e) {
 searchBar.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const findUser = searchBar.value;
-    if (findUser === "admin" || findUser === "co_admin") filterUser(findUser);
+    filterUser(findUser);
   }
+});
+searchBar.addEventListener("input", () => {
+  if (searchBar.value === "") {
+    displayUsers();
+    displayUsersContainer.replaceChildren();
+  }
+});
+sortBtn.addEventListener("change", function (e) {
+  sortUsers(sortBtn.value);
 });
