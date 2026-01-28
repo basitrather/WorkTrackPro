@@ -85,12 +85,25 @@
 
             <!-- Section 2 : Created Users Record -->
             <section class="card users-record">
-              <h2>Created Users</h2>
-
-              <div class="user-box">
-                <span>John Doe</span>
-                <small>john@example.com</small>
+              <div class="user-record-header">
+                <h2>Created Users</h2>
+                <div class="sortByDiv">
+                  <label for="sort">SORT BY</label>
+                  <select class="sort">
+                    <option value="name">Username</option>
+                    <option value="email">Email</option>
+                    <option value="task-completed">Role</option>
+                    <option value="task-assigned">Status</option>
+                    <option value="task-assigned">Date Joined</option>
+                  </select>
+                </div>
+                <input
+                  placeholder="Search User"
+                  class="searchBar"
+                  type="search"
+                />
               </div>
+              <div class="user-box"></div>
             </section>
           </div>
 

@@ -41,7 +41,23 @@ const dashBoardBtn = document.querySelector(".dashBoard");
 const primaryBtn = document.querySelector(".primary-btn");
 const selectBtn = document.querySelector(".new-user-role");
 const createUserSection = document.querySelector(".user-management");
-const displayUsersContainer = document.querySelector(".users-record");
+const displayUsersContainer = document.querySelector(".user-box");
+const searchBar = document.querySelector(".searchBar");
+
+// Create user HTML Function
+const createUserHTML = function (user) {
+  displayUsersContainer.insertAdjacentHTML(
+    "beforeend",
+    `<div class="user-box user-row">
+     <span class="user-name">John Doe</span>
+     <span class="assigned-task">0</span>
+     <span class="pending-task">0</span>
+     <span class="completed-task">0</span>
+     <span class="user-role">${user.role}</span>
+     <span>Edit</span>
+   </div>`,
+  );
+};
 
 //Display users to dashboard admin panel
 const displayUsers = async function (params) {
@@ -49,21 +65,27 @@ const displayUsers = async function (params) {
   let { data: user_roles, error } = await supabase
     .from("user_roles")
     .select("*");
-  console.log(user_roles);
   user_roles.forEach((user, index) => {
-    displayUsersContainer.insertAdjacentHTML(
-      "beforeend",
-      `<div class="user-box user-row">
-     <span class="user-name">John Doe</span>
-     <span class="assigned-task">0</span>
-     <span class="pending-task">0</span>
-     <span class="completed-task">0</span>
-     <span class="user-role">${user.role}</span>
-   </div>`,
-    );
+    createUserHTML(user);
   });
 };
 displayUsers();
+
+//FilterUser
+const filterUser = async function (role) {
+  try {
+    let { data: user_roles, error } = await supabase
+      .from("user_roles")
+      .select("*");
+    if (!role) return;
+    displayUsersContainer.replaceChildren();
+    user_roles.forEach((user) => {
+      if (user.role === role) {
+        createUserHTML(user);
+      }
+    });
+  } catch {}
+};
 //Generate password Function
 const generatepassword = function () {
   let generator = require("generate-password");
@@ -79,7 +101,6 @@ const generatepassword = function () {
 const createUser = async function () {
   const newUserName = document.querySelector(".new-user-name").value;
   const newEmail = document.querySelector(".new-email").value;
-  // const usertype = document.
   const password = generatepassword();
   try {
     //Create new user
@@ -105,6 +126,8 @@ const createUser = async function () {
         {
           user_id: createUserRequest.data.session.user.id,
           role: selectBtn.value,
+          display_name: newUserName,
+          email: newEmail,
         },
       ])
       .select();
@@ -166,4 +189,10 @@ dashBoardBtn.addEventListener("click", function () {
 primaryBtn.addEventListener("click", function (e) {
   e.preventDefault();
   createUser();
+});
+searchBar.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    const findUser = searchBar.value;
+    if (findUser === "admin" || findUser === "co_admin") filterUser(findUser);
+  }
 });

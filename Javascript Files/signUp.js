@@ -29,7 +29,18 @@ const signUp = async (name, email, pass) => {
         },
       },
     });
-    console.log(response);
+
+    const addToUserRolesTable = await supabase
+      .from("user_roles")
+      .insert([
+        {
+          user_id: createUserRequest.data.session.user.id,
+          display_name: name,
+          email: email,
+        },
+      ])
+      .select();
+
     //To generate error messege on DOM
     if (
       response.error?.code === "user_already_exists" &&
