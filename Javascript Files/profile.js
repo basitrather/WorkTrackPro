@@ -1,3 +1,4 @@
+import { emit } from "process";
 import { supabase } from "./supabase";
 import { generate } from "generate-password";
 
@@ -44,9 +45,72 @@ const createUserSection = document.querySelector(".user-management");
 const displayUsersContainer = document.querySelector(".user-box");
 const searchBar = document.querySelector(".searchBar");
 const sortBtn = document.querySelector(".sort");
+const modalWindowContainer = document.querySelector(".modal-overlay");
+const modalWindowCloseBtn = document.querySelector(".modal-close");
+const modalWindowCloseBtn2 = document.querySelector(".secondary-btn");
+const updateBtn = document.querySelector(".update-btn");
+let selectedEmail = "";
+
+//Edit user Function
+const editUser = async function (user) {
+  const updatedUsername = document.querySelector(".edit-user-name").value;
+  const updatedEmail = document.querySelector(".edit-user-email").value;
+  const updatedRole = document.querySelector(".edit-user-role").value;
+  try {
+    // const { data, error } = await supabase
+    //   .from("user_roles")
+    //   .update({
+    //     display_name: updatedUsername,
+    //     email: updatedEmail,
+    //     role: updatedRole,
+    //   })
+    //   .eq("email", user.textContent)
+    //   .select();
+    // if (error) {
+    //   console.error(error);
+    // }
+    if (updatedUsername) {
+      const res1 = await supabase
+        .from("user_roles")
+        .update({
+          display_name: updatedUsername,
+        })
+        .eq("email", user.textContent)
+        .select();
+    }
+    if (updatedEmail) {
+      const res2 = await supabase
+        .from("user_roles")
+        .update({
+          email: updatedEmail,
+        })
+        .eq("email", user.textContent)
+        .select();
+    }
+    if (updatedRole) {
+      const res3 = await supabase
+        .from("user_roles")
+        .update({
+          role: updatedRole,
+        })
+        .eq("email", user.textContent)
+        .select();
+    }
+    let { data: user_roles, error } = await supabase
+      .from("user_roles")
+      .select("*");
+    displayUsersContainer.replaceChildren();
+    user_roles.forEach((user) => {
+      createUserHTML(user);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // Create user HTML Function
 const createUserHTML = function (user) {
+  if (user.role === "admin") return;
   displayUsersContainer.insertAdjacentHTML(
     "beforeend",
     `<div class="user-box user-row">
@@ -55,7 +119,7 @@ const createUserHTML = function (user) {
      <span class="status">-</span>
      <span class="acc-creation-date">${user.created_at}</span>
      <span class="user-role">${user.role}</span>
-     <span style="color: #007bff; cursor:pointer">Edit</span>
+     <span class="edit-user" style="color: #007bff; cursor:pointer">Edit</span>
    </div>`,
   );
 };
@@ -72,7 +136,6 @@ const sortUsers = async function (sortby) {
     let { data: user_roles, error } = await supabase
       .from("user_roles")
       .select("*");
-    console.log(user_roles);
     // Clear already displayed users
     displayUsersContainer.replaceChildren();
 
@@ -116,6 +179,7 @@ const displayUsers = async function (params) {
   sortedUsers.forEach((element) => {
     createUserHTML(element);
   });
+  sortUsers(sortBtn.value);
 };
 displayUsers();
 
@@ -263,4 +327,21 @@ searchBar.addEventListener("input", () => {
 });
 sortBtn.addEventListener("change", function (e) {
   sortUsers(sortBtn.value);
+});
+displayUsersContainer.addEventListener("click", function (e) {
+  const selectedEditBtn = e.target.closest(".edit-user");
+  const selectedRow = e.target.closest(".user-row");
+  selectedEmail = selectedRow.querySelector(".contact-info");
+  if (selectedEditBtn) {
+    modalWindowContainer.classList.add("toggle-modal-overlay");
+  }
+});
+modalWindowCloseBtn.addEventListener("click", function () {
+  modalWindowContainer.classList.remove("toggle-modal-overlay");
+});
+modalWindowCloseBtn2.addEventListener("click", function () {
+  modalWindowContainer.classList.remove("toggle-modal-overlay");
+});
+updateBtn.addEventListener("click", function () {
+  editUser(selectedEmail);
 });

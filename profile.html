@@ -135,6 +135,7 @@
                 <a href="#" id="changePasswordLink" class="change-password">
                   Change Password
                 </a>
+                <button>Edit</button>
                 <p class="hint">
                   A password reset link will be sent to your email.
                 </p>
@@ -142,6 +143,40 @@
             </div>
           </section>
         </main>
+      </div>
+    </div>
+    <div class="modal-overlay">
+      <!-- Modal Box -->
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Edit User</h2>
+          <button class="modal-close">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="edit-user-name" />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="edit-user-email" />
+          </div>
+
+          <div class="form-group">
+            <label>Role</label>
+            <select class="edit-user-role">
+              <option value="user">User</option>
+              <option value="co_admin">Co-Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="secondary-btn">Cancel</button>
+          <button class="primary-btn update-btn">Save Changes</button>
+        </div>
       </div>
     </div>
   </body>
