@@ -49,7 +49,42 @@ const modalWindowContainer = document.querySelector(".modal-overlay");
 const modalWindowCloseBtn = document.querySelector(".modal-close");
 const modalWindowCloseBtn2 = document.querySelector(".secondary-btn");
 const updateBtn = document.querySelector(".update-btn");
+const editProfileBtn = document.querySelector(".edit-btn");
+const updateProfileBtn = document.querySelector(".editProfile-primary-btn");
+const exitProfileBtn = document.querySelector(".editProfile-secondary-btn");
+const editModalWindow = document.querySelector(".editProfileModalWindow");
+const editProfileNameField = document.querySelector(".edit-profile-name");
+const editProfileEmailField = document.querySelector(".edit-profile-email");
+const editProfilePicture = document.querySelector(".editProfile-picture-btn");
+
 let selectedEmail = "";
+
+// Edit profile for user function
+const editProfile = async function (newName, newEmail) {
+  console.log(newName, newEmail);
+  try {
+    // Get userData
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    console.log(user);
+    // Update user data in auth
+    const updateUserAuth = await supabase.auth.updateUser({
+      email: newEmail,
+      data: { display_name: newName },
+    });
+    console.log(updateUserAuth);
+    //Update user data in table
+    const { data, error } = await supabase
+      .from("user_roles")
+      .update({ display_name: newName, email: newEmail })
+      .eq("user_id", user.id)
+      .select();
+    console.log(data, error);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 //Edit user Function
 const editUser = async function (user) {
@@ -57,18 +92,6 @@ const editUser = async function (user) {
   const updatedEmail = document.querySelector(".edit-user-email").value;
   const updatedRole = document.querySelector(".edit-user-role").value;
   try {
-    // const { data, error } = await supabase
-    //   .from("user_roles")
-    //   .update({
-    //     display_name: updatedUsername,
-    //     email: updatedEmail,
-    //     role: updatedRole,
-    //   })
-    //   .eq("email", user.textContent)
-    //   .select();
-    // if (error) {
-    //   console.error(error);
-    // }
     if (updatedUsername) {
       const res1 = await supabase
         .from("user_roles")
@@ -344,4 +367,15 @@ modalWindowCloseBtn2.addEventListener("click", function () {
 });
 updateBtn.addEventListener("click", function () {
   editUser(selectedEmail);
+});
+editProfileBtn.addEventListener("click", function () {
+  editModalWindow.classList.add("active");
+});
+exitProfileBtn.addEventListener("click", function () {
+  editModalWindow.classList.remove("active");
+});
+updateProfileBtn.addEventListener("click", function () {
+  if (!editProfileNameField.value && !editProfileEmailField.value) return;
+  console.log("Passed");
+  editProfile(editProfileNameField.value, editProfileEmailField.value);
 });

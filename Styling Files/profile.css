@@ -98,7 +98,8 @@ body {
   place-items: center;
 }
 
-.logout-btn {
+.logout-btn,
+.edit-btn {
   background-image: linear-gradient(#b24ff4, #bd3cd4);
   border: 1px solid #9c27b0;
   border-radius: 4px;
@@ -203,7 +204,12 @@ body {
   border-radius: 8px;
   border: 1px solid #ddd;
 }
-
+.editpf {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .change-password {
   color: #9c27b0;
   text-decoration: none;
@@ -544,4 +550,130 @@ input:focus {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+/* Edit profile styling */
+/* Profile picture section */
+/* Overlay */
+.editProfileModalWindow {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.editProfileModalWindow.active {
+  display: flex;
+}
+
+/* Modal */
+.editProfileModal {
+  background: #fff;
+  width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: fadeIn 0.25s ease;
+}
+
+/* Header */
+.editProfileModal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.editProfileModal-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.editProfileModal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* Body */
+.editProfileModal-body {
+  padding: 20px;
+}
+
+.editProfileModal-body .form-group {
+  margin-bottom: 16px;
+}
+
+.editProfileModal-body label {
+  display: block;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.editProfileModal-body input,
+.editProfileModal-body select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.editProfileModal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Buttons */
+.editProfile-secondary-btn {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.editProfile-primary-btn {
+  background: #9c27b0;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.editProfile-picture-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.editProfile-picture-btn {
+  background: #f3f4f6;
+  border: 1px dashed #9ca3af;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  position: relative;
+}
+
+/* hide input but KEEP IT CLICKABLE */
+.editProfile-picture-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
 }

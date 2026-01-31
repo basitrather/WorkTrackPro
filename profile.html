@@ -132,10 +132,12 @@
               </div>
 
               <div class="profile-actions">
-                <a href="#" id="changePasswordLink" class="change-password">
-                  Change Password
-                </a>
-                <button>Edit</button>
+                <div class="editpf">
+                  <a href="#" id="changePasswordLink" class="change-password">
+                    Change Password
+                  </a>
+                  <button class="edit-btn">Edit</button>
+                </div>
                 <p class="hint">
                   A password reset link will be sent to your email.
                 </p>
@@ -176,6 +178,40 @@
         <div class="modal-footer">
           <button class="secondary-btn">Cancel</button>
           <button class="primary-btn update-btn">Save Changes</button>
+        </div>
+      </div>
+    </div>
+    <!-- Edit profile section -->
+    <div class="editProfileModalWindow">
+      <!-- Modal Box -->
+      <div class="editProfileModal">
+        <div class="editProfileModal-body">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="edit-profile-name" />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="edit-profile-email" />
+          </div>
+
+          <div class="editProfile-picture-section">
+            <label class="editProfile-picture-btn">
+              Change Profile Picture
+              <input
+                type="file"
+                class="editProfile-picture-input"
+                accept="image/*"
+              />
+            </label>
+          </div>
+        </div>
+        <div class="editProfileModal-footer">
+          <button class="editProfile-secondary-btn">Cancel</button>
+          <button class="editProfile-primary-btn update-btn">
+            Save Changes
+          </button>
         </div>
       </div>
     </div>
