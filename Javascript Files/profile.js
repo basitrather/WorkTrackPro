@@ -25,7 +25,20 @@ import { generate } from "generate-password";
     .select("*");
   totaluserCount.textContent = user_roles.length;
 })();
-
+// const getStatus = (async function (params) {
+//   try {
+//     let { data: user_roles, error } = await supabase
+//       .from("user_roles")
+//       .select("*");
+//     user_roles.forEach((element) => {
+//       const isActive = toggleBtn.classList.toggle("active");
+//       toggleBtn.textContent = isActive ? "Activated" : "Deactivated";
+//       toggleBtn.dataset.active = isActive;
+//     });
+//   } catch (error) {
+//     console.error(error);
+//   }
+// })();
 //Selectors
 const userName = document.getElementById("userNameInput");
 const userEmail = document.getElementById("userEmailInput");
@@ -56,8 +69,30 @@ const editModalWindow = document.querySelector(".editProfileModalWindow");
 const editProfileNameField = document.querySelector(".edit-profile-name");
 const editProfileEmailField = document.querySelector(".edit-profile-email");
 const editProfilePicture = document.querySelector(".editProfile-picture-btn");
+const TaskCreationContainer = document.querySelector(".task-create-section");
+const taskSectionBtn = document.querySelector(".tasks");
+const totalUsers = document.querySelector(".totalUsers");
 
 let selectedEmail = "";
+let currentActivationStatus = "";
+
+//Get current status
+
+//User activate/deActivate function
+const activateDecactivate = async function (currentStatus, selectedEmail) {
+  const isActive = currentStatus.classList.toggle("active");
+  currentStatus.textContent = isActive ? "Activated" : "Deactivated";
+  currentStatus.dataset.active = isActive;
+  try {
+    const { data, error } = await supabase
+      .from("user_roles")
+      .update({ status: currentStatus.textContent })
+      .eq("email", selectedEmail.textContent)
+      .select();
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // Edit profile for user function
 const editProfile = async function (newName, newEmail) {
@@ -134,12 +169,19 @@ const editUser = async function (user) {
 // Create user HTML Function
 const createUserHTML = function (user) {
   if (user.role === "admin") return;
+  const userElement = document.createElement("option");
+  userElement.value = user.display_name;
+  userElement.textContent = user.display_name;
+  console.log(userElement);
+  totalUsers.appendChild(userElement);
   displayUsersContainer.insertAdjacentHTML(
     "beforeend",
     `<div class="user-box user-row">
      <span class="user-name">${user.display_name}</span>
      <span class="contact-info">${user.email}</span>
-     <span class="status">-</span>
+    <button 
+       class="toggle-btn status ${user.status === "Activated" ? "active" : ""}" 
+       data-active="${user.status === "active"}">${user.status === "Activated" ? "Activated" : "Deactivated"}</button>
      <span class="acc-creation-date">${user.created_at}</span>
      <span class="user-role">${user.role}</span>
      <span class="edit-user" style="color: #007bff; cursor:pointer">Edit</span>
@@ -284,9 +326,10 @@ const createUser = async function () {
 
 //Show/Hide dashboard content
 const toggleContent = function () {
-  ProfileContainer.classList.toggle("showView");
+  ProfileContainer.classList.toggle("hideView");
   topBar.classList.toggle("hideView");
   createUserSection.classList.toggle("hideView");
+  TaskCreationContainer.classList.toggle("active");
 };
 
 //Logout Function
@@ -331,6 +374,9 @@ userProfilesBtn.addEventListener("click", function (e) {
 dashBoardBtn.addEventListener("click", function () {
   toggleContent();
 });
+taskSectionBtn.addEventListener("click", function () {
+  toggleContent();
+});
 
 primaryBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -354,7 +400,11 @@ sortBtn.addEventListener("change", function (e) {
 displayUsersContainer.addEventListener("click", function (e) {
   const selectedEditBtn = e.target.closest(".edit-user");
   const selectedRow = e.target.closest(".user-row");
+  const statusSelect = e.target.closest(".toggle-btn");
   selectedEmail = selectedRow.querySelector(".contact-info");
+  activateDecactivate(statusSelect, selectedEmail);
+  currentActivationStatus = selectedRow.querySelector(".statu÷s");
+
   if (selectedEditBtn) {
     modalWindowContainer.classList.add("toggle-modal-overlay");
   }

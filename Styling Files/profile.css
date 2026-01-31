@@ -99,7 +99,8 @@ body {
 }
 
 .logout-btn,
-.edit-btn {
+.edit-btn,
+.activation-status {
   background-image: linear-gradient(#b24ff4, #bd3cd4);
   border: 1px solid #9c27b0;
   border-radius: 4px;
@@ -512,14 +513,30 @@ input:focus {
   border: 1px solid #d1d5db;
   font-size: 0.9rem;
 }
-
 /* Footer */
 .modal-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 12px;
   padding: 16px 20px;
   border-top: 1px solid #e5e7eb;
+}
+.toggle-btn {
+  background-color: rgb(255, 0, 0);
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* active state */
+.toggle-btn.active {
+  background: #22c55e;
+  color: #fff;
 }
 
 /* Buttons */
@@ -676,4 +693,97 @@ input:focus {
   inset: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+/* Styling for task section */
+.task-create-section {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  margin-bottom: 32px;
+  display: none;
+}
+
+.task-create-section.active {
+  display: block;
+}
+
+.task-create-section h2 {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+/* Form */
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.task-field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* .totalUsers {
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+} */
+.task-create-section option {
+  font-size: 1.2rem;
+  background-color: white;
+  color: black;
+  border: 1px solid grey;
+  border-radius: 10px;
+  margin-bottom: 7px;
+}
+.task-field label {
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: #6b7280;
+}
+
+.task-field input,
+.task-field textarea,
+.task-field select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.task-field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Row for date & time */
+.task-row {
+  display: flex;
+  gap: 16px;
+}
+
+.task-row .task-field {
+  flex: 1;
+}
+
+/* Button */
+.task-create-btn {
+  align-self: flex-end;
+  background: #9c27b0;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.task-create-btn:hover {
+  opacity: 0.9;
 }

@@ -144,9 +144,72 @@
               </div>
             </div>
           </section>
+          <section class="task-create-section">
+            <h2>Create Task</h2>
+
+            <form class="task-form">
+              <!-- Title -->
+              <div class="task-field">
+                <label>Task Title</label>
+                <input type="text" placeholder="Enter task title" />
+              </div>
+
+              <!-- Description -->
+              <div class="task-field">
+                <label>Description</label>
+                <textarea placeholder="Task details"></textarea>
+              </div>
+
+              <!-- Assign Users -->
+              <div class="task-field">
+                <label>Assign User(s)</label>
+                <select class="totalUsers"></select>
+              </div>
+
+              <!-- Due Date & Time -->
+              <div class="task-row">
+                <div class="task-field">
+                  <label>Due Date</label>
+                  <input type="date" />
+                </div>
+
+                <div class="task-field">
+                  <label>Due Time</label>
+                  <input type="time" />
+                </div>
+              </div>
+
+              <!-- Priority -->
+              <div class="task-field">
+                <label>Priority</label>
+                <select>
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                  <option>Urgent</option>
+                </select>
+              </div>
+
+              <!-- Category / Tags -->
+              <div class="task-field">
+                <label>Category / Tags</label>
+                <input type="text" placeholder="e.g. UI, Backend, Bug" />
+              </div>
+
+              <!-- Estimated Time -->
+              <div class="task-field">
+                <label>Estimated Completion Time (hours)</label>
+                <input type="number" min="1" />
+              </div>
+
+              <!-- Submit -->
+              <button class="task-create-btn">Create Task</button>
+            </form>
+          </section>
         </main>
       </div>
     </div>
+
     <div class="modal-overlay">
       <!-- Modal Box -->
       <div class="modal">
@@ -174,7 +237,6 @@
             </select>
           </div>
         </div>
-
         <div class="modal-footer">
           <button class="secondary-btn">Cancel</button>
           <button class="primary-btn update-btn">Save Changes</button>

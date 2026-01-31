@@ -1,13 +1,12 @@
 import { supabase } from "./supabase";
-// document.addEventListener("load", called);
-(async function () {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    window.location.href = "profile.html";
-  }
-})();
+// (async function () {
+//   const {
+//     data: { user },
+//   } = await supabase.auth.getUser();
+//   if (user) {
+//     window.location.href = "profile.html";
+//   }
+// })();
 //Selectors
 const loginForm = document.getElementById("loginForm");
 const emailInput = loginForm.querySelector('input[type="email"]');
@@ -27,18 +26,30 @@ const forgotPassword = async function (email) {
 //Login function
 const login = async function (email, password) {
   try {
+    //Check if user is activated or not
+    const checkActivation = await supabase
+      .from("user_roles")
+      .select("*")
+      .eq("email", email);
+    console.log(checkActivation.data[0]);
+    if (checkActivation.data[0].status === "Deactivated") {
+      errorMsg.textContent = "Account is deactivated by the admin";
+      return;
+    }
+
     let { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
-    console.log("before");
     if (error?.code === "invalid_credentials") {
       errorMsg.textContent = "Invalid credentials. Try again!";
       return;
     }
     console.log("after");
-    if (data.user) {
+    if (checkActivation.data[0].role === "admin") {
       window.location.href = "profile.html";
+    } else {
+      // window.location.href = "signup.html";
     }
   } catch (error) {
   } finally {
