@@ -1,4 +1,4 @@
-import { emit } from "process";
+import { emit, title } from "process";
 import { supabase } from "./supabase";
 import { generate } from "generate-password";
 
@@ -25,20 +25,6 @@ import { generate } from "generate-password";
     .select("*");
   totaluserCount.textContent = user_roles.length;
 })();
-// const getStatus = (async function (params) {
-//   try {
-//     let { data: user_roles, error } = await supabase
-//       .from("user_roles")
-//       .select("*");
-//     user_roles.forEach((element) => {
-//       const isActive = toggleBtn.classList.toggle("active");
-//       toggleBtn.textContent = isActive ? "Activated" : "Deactivated";
-//       toggleBtn.dataset.active = isActive;
-//     });
-//   } catch (error) {
-//     console.error(error);
-//   }
-// })();
 //Selectors
 const userName = document.getElementById("userNameInput");
 const userEmail = document.getElementById("userEmailInput");
@@ -72,11 +58,54 @@ const editProfilePicture = document.querySelector(".editProfile-picture-btn");
 const TaskCreationContainer = document.querySelector(".task-create-section");
 const taskSectionBtn = document.querySelector(".tasks");
 const totalUsers = document.querySelector(".totalUsers");
-
+const createTaskBtn = document.querySelector(".task-create-btn");
 let selectedEmail = "";
 let currentActivationStatus = "";
 
-//Get current status
+//Create task
+const createTask = async function (params) {
+  const taskTitle = document.querySelector(".taskTitle").value;
+  const taskDescription = document.querySelector(".taskDescription").value;
+  const taskDueDate = document.querySelector(".taskDueDate").value;
+  const taskDueTime = document.querySelector(".taskDueTime").value;
+  const taskPriority = document.querySelector(".taskPriority").value;
+  const taskCatagory = document.querySelector(".taskCatagory").value;
+  const userOption = document.querySelector(".totalUsers").value;
+  // console.log(taskPriority);
+  // return;
+  try {
+    //Task Assigner
+    const currentLoggedInUser = await supabase.auth.getUser();
+    console.log();
+
+    let { data: user_roles } = await supabase
+      .from("user_roles")
+      .select("display_name")
+      .eq(
+        "display_name",
+        currentLoggedInUser.data.user.identities[0].identity_data.display_name,
+      );
+    console.log(taskDescription.textContent);
+    const { data: user } = await supabase
+      .from("user_roles")
+      .select("user_id")
+      .eq("user_id", userOption)
+      .single();
+    const { error } = await supabase.from("tasks").insert({
+      user_id: user.user_id,
+      title: taskTitle,
+      description: taskDescription,
+      due_date: taskDueDate,
+      due_time: taskDueTime,
+      priority: taskPriority,
+      Category: taskCatagory,
+      created_by: user_roles[0].display_name,
+      created_at: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 //User activate/deActivate function
 const activateDecactivate = async function (currentStatus, selectedEmail) {
@@ -170,9 +199,8 @@ const editUser = async function (user) {
 const createUserHTML = function (user) {
   if (user.role === "admin") return;
   const userElement = document.createElement("option");
-  userElement.value = user.display_name;
-  userElement.textContent = user.display_name;
-  console.log(userElement);
+  userElement.value = user.user_id;
+  userElement.textContent = user.email;
   totalUsers.appendChild(userElement);
   displayUsersContainer.insertAdjacentHTML(
     "beforeend",
@@ -402,12 +430,9 @@ displayUsersContainer.addEventListener("click", function (e) {
   const selectedRow = e.target.closest(".user-row");
   const statusSelect = e.target.closest(".toggle-btn");
   selectedEmail = selectedRow.querySelector(".contact-info");
-  activateDecactivate(statusSelect, selectedEmail);
-  currentActivationStatus = selectedRow.querySelector(".statu÷s");
-
-  if (selectedEditBtn) {
+  if (statusSelect) activateDecactivate(statusSelect, selectedEmail);
+  if (selectedEditBtn)
     modalWindowContainer.classList.add("toggle-modal-overlay");
-  }
 });
 modalWindowCloseBtn.addEventListener("click", function () {
   modalWindowContainer.classList.remove("toggle-modal-overlay");
@@ -426,6 +451,10 @@ exitProfileBtn.addEventListener("click", function () {
 });
 updateProfileBtn.addEventListener("click", function () {
   if (!editProfileNameField.value && !editProfileEmailField.value) return;
-  console.log("Passed");
   editProfile(editProfileNameField.value, editProfileEmailField.value);
+});
+createTaskBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  console.log("hsvx");
+  createTask();
 });

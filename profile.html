@@ -89,7 +89,7 @@
                 <h2>Created Users</h2>
                 <div class="sortByDiv">
                   <label for="sort">SORT BY</label>
-                  <select class="sort">
+                  <select class="sort" id="sort">
                     <option value="display_name">Username</option>
                     <option value="role">Role</option>
                     <!-- <option value="status">Status</option> -->
@@ -151,13 +151,20 @@
               <!-- Title -->
               <div class="task-field">
                 <label>Task Title</label>
-                <input type="text" placeholder="Enter task title" />
+                <input
+                  class="taskTitle"
+                  type="text"
+                  placeholder="Enter task title"
+                />
               </div>
 
               <!-- Description -->
               <div class="task-field">
                 <label>Description</label>
-                <textarea placeholder="Task details"></textarea>
+                <textarea
+                  class="taskDescription"
+                  placeholder="Task details"
+                ></textarea>
               </div>
 
               <!-- Assign Users -->
@@ -170,37 +177,41 @@
               <div class="task-row">
                 <div class="task-field">
                   <label>Due Date</label>
-                  <input type="date" />
+                  <input class="taskDueDate" type="date" />
                 </div>
 
                 <div class="task-field">
                   <label>Due Time</label>
-                  <input type="time" />
+                  <input class="taskDueTime" type="time" />
                 </div>
               </div>
 
               <!-- Priority -->
               <div class="task-field">
                 <label>Priority</label>
-                <select>
-                  <option>Low</option>
-                  <option>Medium</option>
-                  <option>High</option>
-                  <option>Urgent</option>
+                <select class="taskPriority">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
                 </select>
               </div>
 
               <!-- Category / Tags -->
               <div class="task-field">
                 <label>Category / Tags</label>
-                <input type="text" placeholder="e.g. UI, Backend, Bug" />
+                <input
+                  class="taskCatagory"
+                  type="text"
+                  placeholder="e.g. UI, Backend, Bug"
+                />
               </div>
 
               <!-- Estimated Time -->
-              <div class="task-field">
+              <!-- <div class="task-field">
                 <label>Estimated Completion Time (hours)</label>
-                <input type="number" min="1" />
-              </div>
+                <input class="taskEstComTime" type="number" min="1" />
+              </div> -->
 
               <!-- Submit -->
               <button class="task-create-btn">Create Task</button>
