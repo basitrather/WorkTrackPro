@@ -175,7 +175,6 @@ body {
 
 /* Profile */
 .profile-section {
-  display: none;
   max-width: 500px;
 }
 
@@ -704,7 +703,6 @@ input:focus {
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
   margin-bottom: 32px;
-  display: none;
 }
 
 .task-create-section.active {
@@ -732,7 +730,7 @@ input:focus {
 /* .totalUsers {
   height: 20vh;
   display: flex;
-  justify-content: center;
+  justify-content: center;  
 } */
 .task-create-section option {
   font-size: 1.2rem;
@@ -786,4 +784,128 @@ input:focus {
 
 .task-create-btn:hover {
   opacity: 0.9;
+}
+
+/* Render tasks styling */
+.task-list-section {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.task-card {
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-header h3 {
+  font-size: 1rem;
+}
+
+/* Badge container */
+.badges {
+  display: flex;
+  gap: 8px;
+}
+
+/* Description */
+.task-desc {
+  margin: 10px 0;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+/* Meta */
+.task-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ------------------ */
+/* Priority styles */
+/* ------------------ */
+.priority {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.priority.low {
+  background: #e5f9e7;
+  color: #2e7d32;
+}
+
+.priority.medium {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.priority.high {
+  background: #fdecea;
+  color: #c62828;
+}
+
+.priority.urgent {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+.assigned-user {
+  font-size: 0.85rem;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+/* ------------------ */
+/* Status styles */
+/* ------------------ */
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+/* Default */
+.status.pending {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status.in-progress {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status.completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.overdue {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status.on-hold {
+  background: #fef3c7;
+  color: #92400e;
 }

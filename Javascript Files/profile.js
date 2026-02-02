@@ -25,6 +25,20 @@ import { generate } from "generate-password";
     .select("*");
   totaluserCount.textContent = user_roles.length;
 })();
+(async function () {
+  let { data: user_roles, error } = await supabase
+    .from("user_roles")
+    .select("*");
+  user_roles.forEach((user) => {
+    if (user.role === "admin") return;
+    const userElement = document.createElement("option");
+    userElement.value = user.user_id;
+    userElement.textContent = user.display_name;
+    userElement.style.color = "white";
+    totalUsers.appendChild(userElement);
+  });
+  //Render the users in the user create options
+})();
 //Selectors
 const userName = document.getElementById("userNameInput");
 const userEmail = document.getElementById("userEmailInput");
@@ -59,10 +73,58 @@ const TaskCreationContainer = document.querySelector(".task-create-section");
 const taskSectionBtn = document.querySelector(".tasks");
 const totalUsers = document.querySelector(".totalUsers");
 const createTaskBtn = document.querySelector(".task-create-btn");
+const taskListContainer = document.querySelector(".task-list");
 let selectedEmail = "";
-let currentActivationStatus = "";
 
-//Create task
+// Create Tasks dynamically function
+const createTaskHTML = function (task) {
+  if (
+    new Date().toISOString().split("T")[0] > task.due_date &&
+    task.status !== "completed"
+  ) {
+    task.status = "overdue";
+  }
+  taskListContainer.insertAdjacentHTML(
+    "beforeend",
+    `<div class="task-card">
+      <div class="task-header">
+        <h3>${task.title}</h3>
+
+        <div class="badges">
+          <span class="priority ${task.priority}">${task.priority}</span>
+          <span class="status ${task.status}">
+            ${task.status.replace("-", " ")}
+          </span>
+        </div>
+      </div>
+      <p class="task-desc">${task.description}</p>
+      <div class="assigned-user">
+        👤 Assigned To: <strong>${task.username}</strong>
+      </div>
+      <div class="task-meta">
+        <span>🧑‍💼 Assigned By: ${task.created_by}</span>
+        <span>📅 Due: ${task.due_date}</span>
+        <span>⏰ Due: ${task.due_time}</span>
+      </div>
+    </div>`,
+  );
+};
+
+// Display tasks function
+const displayTasks = async function (params) {
+  if (params) {
+    createTaskHTML(params);
+    return;
+  }
+  //Get task details
+  let { data: tasks } = await supabase.from("tasks").select("*");
+  tasks.forEach((element) => {
+    createTaskHTML(element);
+  });
+};
+displayTasks();
+
+//Create task function
 const createTask = async function (params) {
   const taskTitle = document.querySelector(".taskTitle").value;
   const taskDescription = document.querySelector(".taskDescription").value;
@@ -71,8 +133,6 @@ const createTask = async function (params) {
   const taskPriority = document.querySelector(".taskPriority").value;
   const taskCatagory = document.querySelector(".taskCatagory").value;
   const userOption = document.querySelector(".totalUsers").value;
-  // console.log(taskPriority);
-  // return;
   try {
     //Task Assigner
     const currentLoggedInUser = await supabase.auth.getUser();
@@ -85,23 +145,33 @@ const createTask = async function (params) {
         "display_name",
         currentLoggedInUser.data.user.identities[0].identity_data.display_name,
       );
-    console.log(taskDescription.textContent);
     const { data: user } = await supabase
       .from("user_roles")
       .select("user_id")
       .eq("user_id", userOption)
       .single();
-    const { error } = await supabase.from("tasks").insert({
-      user_id: user.user_id,
-      title: taskTitle,
-      description: taskDescription,
-      due_date: taskDueDate,
-      due_time: taskDueTime,
-      priority: taskPriority,
-      Category: taskCatagory,
-      created_by: user_roles[0].display_name,
-      created_at: new Date().toISOString(),
-    });
+
+    let getUserDetails = await supabase
+      .from("user_roles")
+      .select("*")
+      .eq("user_id", userOption);
+
+    const task = await supabase
+      .from("tasks")
+      .insert({
+        user_id: user.user_id,
+        title: taskTitle,
+        description: taskDescription,
+        due_date: taskDueDate,
+        due_time: taskDueTime,
+        priority: taskPriority,
+        Category: taskCatagory,
+        created_by: user_roles[0].display_name,
+        created_at: new Date().toISOString(),
+        username: getUserDetails.data[0].display_name,
+      })
+      .select();
+    displayTasks(task.data[0]);
   } catch (error) {
     console.error(error);
   }
@@ -198,10 +268,7 @@ const editUser = async function (user) {
 // Create user HTML Function
 const createUserHTML = function (user) {
   if (user.role === "admin") return;
-  const userElement = document.createElement("option");
-  userElement.value = user.user_id;
-  userElement.textContent = user.email;
-  totalUsers.appendChild(userElement);
+  //Render the users in user list
   displayUsersContainer.insertAdjacentHTML(
     "beforeend",
     `<div class="user-box user-row">
@@ -258,10 +325,15 @@ const sortUsers = async function (sortby) {
 
 //Display users to dashboard admin panel
 const displayUsers = async function (params) {
+  totalUsers.innerHTML = "";
   if (params) {
     createUserHTML(params);
     return;
   }
+  //Get task details
+
+  let { data: tasks } = await supabase.from("tasks").select("*");
+
   //Get user details
   let { data: user_roles, error } = await supabase
     .from("user_roles")
@@ -383,28 +455,28 @@ logOutBtn.addEventListener("click", function () {
   logOut();
 });
 
-sideBar.addEventListener("click", function (e) {
-  const btnClicked = e.target.closest("li");
+// sideBar.addEventListener("click", function (e) {
+//   const btnClicked = e.target.closest("li");
 
-  if (!btnClicked) return;
-  sideBarOpts.forEach((li) => {
-    if (li !== btnClicked) {
-      li.classList.remove("active");
-    }
-  });
-  btnClicked.classList.add("active");
-});
+//   if (!btnClicked) return;
+//   sideBarOpts.forEach((li) => {
+//     if (li !== btnClicked) {
+//       li.classList.remove("active");
+//     }
+//   });
+//   btnClicked.classList.add("active");
+// });
 
-userProfilesBtn.addEventListener("click", function (e) {
-  toggleContent();
-});
+// userProfilesBtn.addEventListener("click", function (e) {
+//   toggleContent();
+// });
 
-dashBoardBtn.addEventListener("click", function () {
-  toggleContent();
-});
-taskSectionBtn.addEventListener("click", function () {
-  toggleContent();
-});
+// dashBoardBtn.addEventListener("click", function () {
+//   toggleContent();
+// });
+// taskSectionBtn.addEventListener("click", function () {
+//   toggleContent();
+// });
 
 primaryBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -455,6 +527,5 @@ updateProfileBtn.addEventListener("click", function () {
 });
 createTaskBtn.addEventListener("click", function (e) {
   e.preventDefault();
-  console.log("hsvx");
   createTask();
 });
