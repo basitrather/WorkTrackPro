@@ -46,11 +46,16 @@ const login = async function (email, password) {
       return;
     }
     console.log("after");
-    if (checkActivation.data[0].role === "admin") {
+    if (
+      checkActivation.data[0].role === "admin" ||
+      checkActivation.data[0].role === "admin"
+    ) {
       window.location.href = "profile.html";
-    } else {
-      // window.location.href = "signup.html";
-    }
+    } else window.location.href = "user.html";
+
+    // if (checkActivation.data[0].role === "user") {
+    //   window.location.href = "user.html";
+    // }
   } catch (error) {
   } finally {
   }

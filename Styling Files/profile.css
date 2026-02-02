@@ -407,7 +407,7 @@ select:focus {
   margin-bottom: 10px;
   font-size: 0.9rem;
 }
-.user-row.user-box:nth-last-child {
+.user-row.user-box::nth-last-child {
   color: blue;
 }
 

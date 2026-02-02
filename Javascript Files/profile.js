@@ -185,7 +185,7 @@ const activateDecactivate = async function (currentStatus, selectedEmail) {
   try {
     const { data, error } = await supabase
       .from("user_roles")
-      .update({ status: currentStatus.textContent })
+      .update({ status: currentStatus.textContent.toLowerCase() })
       .eq("email", selectedEmail.textContent)
       .select();
   } catch (error) {
@@ -275,8 +275,8 @@ const createUserHTML = function (user) {
      <span class="user-name">${user.display_name}</span>
      <span class="contact-info">${user.email}</span>
     <button 
-       class="toggle-btn status ${user.status === "Activated" ? "active" : ""}" 
-       data-active="${user.status === "active"}">${user.status === "Activated" ? "Activated" : "Deactivated"}</button>
+       class="toggle-btn status ${user.status === "activated" ? "active" : ""}" 
+       data-active="${user.status === "active"}">${user.status === "activated" ? "Activated" : "Deactivated"}</button>
      <span class="acc-creation-date">${user.created_at}</span>
      <span class="user-role">${user.role}</span>
      <span class="edit-user" style="color: #007bff; cursor:pointer">Edit</span>

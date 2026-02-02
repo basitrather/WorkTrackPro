@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="./Styling Files/user.css" />
+    <script type="module" src="/Javascript Files/user.js"></script>
+  </head>
+
+  <body>
+    <div class="app-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2 class="logo">Dashboard</h2>
+        <ul class="sidebar-menu">
+          <li class="active">My Tasks</li>
+          <li>Profile</li>
+          <li>Settings</li>
+        </ul>
+      </aside>
+
+      <!-- Main Area -->
+      <div class="main-area">
+        <!-- Topbar -->
+        <header class="topbar">
+          <div></div>
+          <div class="topbar-right">
+            <div class="user-info">
+              <span class="nav-user-name">Basit Rather</span>
+              <span class="user-email">basit@example.com</span>
+            </div>
+            <div class="user-avatar">👤</div>
+            <button class="logout-btn">Logout</button>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <main class="content">
+          <!-- Stats -->
+          <section class="stats">
+            <div class="stat-card orange">
+              <h4>Total Tasks</h4>
+              <p id="total-taks">0</p>
+            </div>
+            <div class="stat-card green">
+              <h4>Completed</h4>
+              <p>0</p>
+            </div>
+            <div class="stat-card red">
+              <h4>Overdue</h4>
+              <p>0</p>
+            </div>
+          </section>
+
+          <!-- Tasks -->
+          <section class="task-list-section">
+            <h2>My Tasks</h2>
+            <div class="task-list"></div>
+          </section>
+        </main>
+        <section class="profile-section">
+          <div class="profile-container">
+            <h2>User Profile</h2>
+
+            <div class="profile-field">
+              <label>Name</label>
+              <input
+                type="text"
+                class="profile-name"
+                value="Basit Rather"
+                disabled
+              />
+            </div>
+
+            <div class="profile-field">
+              <label>Email</label>
+              <input
+                type="email"
+                class="profile-email"
+                value="basit@example.com"
+                disabled
+              />
+            </div>
+
+            <!-- PROFILE ACTIONS -->
+            <div class="profile-actions">
+              <div class="profile-action-row">
+                <a href="#" class="change-password"> Change Password </a>
+                <button class="edit-profile-btn">Edit Profile</button>
+              </div>
+
+              <p class="hint">
+                A password reset link will be sent to your email.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>
