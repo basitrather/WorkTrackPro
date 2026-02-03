@@ -18,7 +18,7 @@ const taskNotesContainer = document.querySelector(".task-list-section");
 
 const readableTimeConvert = function formatTimestamp(ts) {
   return new Date(ts)
-    .toLocaleString("en-GB", {
+    .toLocaleString("en-IN", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -35,7 +35,7 @@ const displayNote = function (note, noteParent, noteInput) {
     "beforeend",
     `<div class="note">
       <strong>${note.data[0].username}</strong>
-      <span>${note.data[0].created_at}</span>
+      <span>${readableTimeConvert(new Date().toISOString())}</span>
       <p>${noteInput}</p>
     </div>`,
   );
@@ -103,7 +103,7 @@ ${task.notes
     (element, index) => `
   <div class="note">
     <strong>${task.username}</strong>
-    <span>${element.created_at}</span>
+    <span>${readableTimeConvert(element.created_at)}</span>
     <p>${element.note}</p>
   </div>
 `,
