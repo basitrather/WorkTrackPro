@@ -25,20 +25,29 @@ import { generate } from "generate-password";
     .select("*");
   totaluserCount.textContent = user_roles.length;
 })();
+const optionsBox = document.querySelector("#userSelect .options");
+const selectBox = document.querySelector("#userSelect .select-box");
 (async function () {
   let { data: user_roles, error } = await supabase
     .from("user_roles")
     .select("*");
+  // create checkboxes dynamically
   user_roles.forEach((user) => {
     if (user.role === "admin") return;
-    const userElement = document.createElement("option");
-    userElement.value = user.user_id;
-    userElement.textContent = user.display_name;
-    userElement.style.color = "white";
-    totalUsers.appendChild(userElement);
+    const label = document.createElement("label");
+    label.innerHTML = `
+    <input type="checkbox" value="${user.user_id}">
+    ${user.display_name}
+  `;
+    optionsBox.appendChild(label);
   });
-  //Render the users in the user create options
+
+  // toggle dropdown
+  selectBox.addEventListener("click", () => {
+    document.getElementById("userSelect").classList.toggle("open");
+  });
 })();
+
 //Selectors
 const userName = document.getElementById("userNameInput");
 const userEmail = document.getElementById("userEmailInput");
@@ -76,6 +85,13 @@ const createTaskBtn = document.querySelector(".task-create-btn");
 const taskListContainer = document.querySelector(".task-list");
 let selectedEmail = "";
 
+// get selected users upon selecting Function
+function getSelectedUsers() {
+  return [...optionsBox.querySelectorAll("input:checked")].map(
+    (cb) => cb.value,
+  );
+}
+
 // Create Tasks dynamically function
 const createTaskHTML = function (task) {
   if (
@@ -93,7 +109,7 @@ const createTaskHTML = function (task) {
         <div class="badges">
           <span class="priority ${task.priority}">${task.priority}</span>
           <span class="status ${task.status}">
-            ${task.status.replace("-", " ")}
+            ${task.status}
           </span>
         </div>
       </div>
@@ -124,20 +140,47 @@ const displayTasks = async function (params) {
 };
 displayTasks();
 
-//Create task function
-const createTask = async function (params) {
+const multipleTaskCreation = async function (user, admin) {
   const taskTitle = document.querySelector(".taskTitle").value;
   const taskDescription = document.querySelector(".taskDescription").value;
   const taskDueDate = document.querySelector(".taskDueDate").value;
   const taskDueTime = document.querySelector(".taskDueTime").value;
   const taskPriority = document.querySelector(".taskPriority").value;
   const taskCatagory = document.querySelector(".taskCatagory").value;
-  const userOption = document.querySelector(".totalUsers").value;
+  try {
+    //To get user display Name
+    let { data } = await supabase
+      .from("user_roles")
+      .select("*")
+      .eq("user_id", user);
+
+    //insert task into the tasks row
+    const task = await supabase
+      .from("tasks")
+      .insert({
+        user_id: user,
+        title: taskTitle,
+        description: taskDescription,
+        due_date: taskDueDate,
+        due_time: taskDueTime,
+        priority: taskPriority,
+        Category: taskCatagory,
+        created_by: admin[0].display_name,
+        created_at: new Date().toISOString(),
+        username: data[0].display_name,
+      })
+      .select();
+    //Display tasks after creating
+    displayTasks(task.data[0]);
+  } catch (error) {
+    console.error(error);
+  }
+};
+//Create task function
+const createTask = async function (params) {
   try {
     //Task Assigner
     const currentLoggedInUser = await supabase.auth.getUser();
-    console.log();
-
     let { data: user_roles } = await supabase
       .from("user_roles")
       .select("display_name")
@@ -145,33 +188,10 @@ const createTask = async function (params) {
         "display_name",
         currentLoggedInUser.data.user.identities[0].identity_data.display_name,
       );
-    const { data: user } = await supabase
-      .from("user_roles")
-      .select("user_id")
-      .eq("user_id", userOption)
-      .single();
-
-    let getUserDetails = await supabase
-      .from("user_roles")
-      .select("*")
-      .eq("user_id", userOption);
-
-    const task = await supabase
-      .from("tasks")
-      .insert({
-        user_id: user.user_id,
-        title: taskTitle,
-        description: taskDescription,
-        due_date: taskDueDate,
-        due_time: taskDueTime,
-        priority: taskPriority,
-        Category: taskCatagory,
-        created_by: user_roles[0].display_name,
-        created_at: new Date().toISOString(),
-        username: getUserDetails.data[0].display_name,
-      })
-      .select();
-    displayTasks(task.data[0]);
+    const selectedUsers = getSelectedUsers();
+    selectedUsers.forEach((element) => {
+      multipleTaskCreation(element, user_roles);
+    });
   } catch (error) {
     console.error(error);
   }
@@ -325,7 +345,7 @@ const sortUsers = async function (sortby) {
 
 //Display users to dashboard admin panel
 const displayUsers = async function (params) {
-  totalUsers.innerHTML = "";
+  // totalUsers.innerHTML = "";
   if (params) {
     createUserHTML(params);
     return;

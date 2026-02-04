@@ -909,3 +909,40 @@ input:focus {
   background: #fef3c7;
   color: #92400e;
 }
+
+/* ////// */
+.multi-select {
+  position: relative;
+}
+
+.select-box {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  background: #fff;
+}
+
+.options {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.multi-select.open .options {
+  display: block;
+}
+
+.options label {
+  display: block;
+  padding: 8px 12px;
+  cursor: pointer;
+}

@@ -16,6 +16,42 @@ const logOutBtn = document.querySelector(".logout-btn");
 const taskContainer = document.querySelector(".task-list");
 const taskNotesContainer = document.querySelector(".task-list-section");
 
+// const getDisableStatusBtn = function (task) {
+//   if (task.status === "completed") return "disabled";
+//   if (
+//     task.status === "in-progress" ||
+//     task.status === "on-hold" ||
+//     task.status === "pending"
+//   )
+//     return "";
+// };
+
+const getCompletedBtnStatus = function (task) {
+  if (
+    task.status === "in-progress" ||
+    task.status === "on-hold" ||
+    task.status === "pending"
+  )
+    return "Mark Completed";
+  if (task.status === "completed") return "Completed";
+};
+
+const getStartBtnStatus = function (task) {
+  if (task.status === "in-progress") return "Hold Task";
+
+  if (task.status === "on-hold" || task.status === "pending")
+    return "Start Task";
+
+  if (task.status === "completed") return "Completed";
+};
+
+const changeStatus = async function (status, id) {
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({ status: status.textContent.toLowerCase() })
+    .eq("id", id)
+    .select();
+};
 const readableTimeConvert = function formatTimestamp(ts) {
   return new Date(ts)
     .toLocaleString("en-IN", {
@@ -30,7 +66,6 @@ const readableTimeConvert = function formatTimestamp(ts) {
 };
 
 const displayNote = function (note, noteParent, noteInput) {
-  console.log(note);
   noteParent.insertAdjacentHTML(
     "beforeend",
     `<div class="note">
@@ -42,13 +77,11 @@ const displayNote = function (note, noteParent, noteInput) {
 };
 
 const addNote = async function (noteInput, id, noteElement) {
-  console.log(id);
   const { data, error } = await supabase
     .from("tasks")
     .select("notes")
     .eq("id", id)
     .single();
-  console.log(data.notes);
 
   const newNote = {
     note: noteInput,
@@ -56,13 +89,11 @@ const addNote = async function (noteInput, id, noteElement) {
   };
 
   const updatedNotes = [...(data.notes || []), newNote];
-  console.log(updatedNotes);
   const createdNote = await supabase
     .from("tasks")
     .update({ notes: updatedNotes })
     .eq("id", id)
     .select();
-  console.log(createdNote);
   displayNote(createdNote, noteElement, noteInput);
 };
 
@@ -88,9 +119,9 @@ const createTaskHTML = function (task) {
 
                 <!-- Status Actions -->
                 <div class="task-actions">
-                  <button class="status-btn start-btn">Start Task</button>
-                  <button class="status-btn complete-btn" disabled>
-                    Mark Completed
+                 ${task.status !== "completed" ? `<button class="status-btn start-btn" ${task.status !== "completed" ? "" : "disabled"}>${getStartBtnStatus(task)}</button>` : ""}
+                  <button class="status-btn complete-btn" ${task.status !== "in-progress" ? "disabled" : ""}>
+                    ${getCompletedBtnStatus(task)}
                   </button>
                 </div>
 
@@ -156,7 +187,6 @@ const logOut = async function () {
 logOutBtn.addEventListener("click", function () {
   logOut();
 });
-console.count("listener attached");
 taskNotesContainer.addEventListener("click", function (e) {
   e.preventDefault();
   const taskCard = e.target.closest(".task-card");
@@ -164,7 +194,34 @@ taskNotesContainer.addEventListener("click", function (e) {
   const taskNotes = taskCard.querySelector(".notes-list");
   const taskId = taskCard.dataset.taskId;
   const addNoteBtn = e.target.closest(".add-note-btn");
-  if (!addNoteBtn) return;
-  console.log(taskNotes);
-  addNote(input, taskId, taskNotes);
+  const statustBtn = e.target.closest(".status-btn");
+  const taskCompletedBtn = e.target.closest(".complete-btn");
+  const taskComplete = taskCard.querySelector(".complete-btn");
+  const status = taskCard.querySelector(".status-btn");
+  const currentStatus = taskCard.querySelector(".status");
+  if (addNoteBtn) {
+    addNote(input, taskId, taskNotes);
+  }
+  if (statustBtn.textContent === "Start Task") {
+    currentStatus.textContent = "in-progress";
+    status.textContent = "Hold Task";
+    taskComplete.disabled = false;
+    changeStatus(currentStatus, taskId);
+    return;
+  }
+  if (statustBtn.textContent === "Hold Task") {
+    currentStatus.textContent = "on-hold";
+    status.textContent = "Start Task";
+    taskComplete.disabled = true;
+    changeStatus(currentStatus, taskId);
+    return;
+  }
+  if (taskCompletedBtn) {
+    status.textContent = "Completed";
+    status.disabled = true;
+    currentStatus.textContent = "Completed";
+    taskComplete.remove();
+    changeStatus(currentStatus, taskId);
+    return;
+  }
 });
