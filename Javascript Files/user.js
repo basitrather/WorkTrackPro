@@ -154,7 +154,7 @@ ${task.notes
                 <div class="task-files">
                   <label class="upload-btn">
                     Upload Proof
-                    <input type="file" multiple hidden />
+                    <input class="file-upload-btn" type="file" multiple hidden />
                   </label>
                 </div>
      </div>`,
@@ -188,8 +188,8 @@ logOutBtn.addEventListener("click", function () {
   logOut();
 });
 taskNotesContainer.addEventListener("click", function (e) {
-  e.preventDefault();
   const taskCard = e.target.closest(".task-card");
+  if (!taskCard) return;
   const input = taskCard.querySelector(".note-input").value;
   const taskNotes = taskCard.querySelector(".notes-list");
   const taskId = taskCard.dataset.taskId;
@@ -199,23 +199,23 @@ taskNotesContainer.addEventListener("click", function (e) {
   const taskComplete = taskCard.querySelector(".complete-btn");
   const status = taskCard.querySelector(".status-btn");
   const currentStatus = taskCard.querySelector(".status");
-  if (addNoteBtn) {
-    addNote(input, taskId, taskNotes);
-  }
-  if (statustBtn.textContent === "Start Task") {
+
+  if (statustBtn && statustBtn.textContent === "Start Task") {
     currentStatus.textContent = "in-progress";
     status.textContent = "Hold Task";
     taskComplete.disabled = false;
     changeStatus(currentStatus, taskId);
     return;
   }
-  if (statustBtn.textContent === "Hold Task") {
+
+  if (statustBtn && statustBtn.textContent === "Hold Task") {
     currentStatus.textContent = "on-hold";
     status.textContent = "Start Task";
     taskComplete.disabled = true;
     changeStatus(currentStatus, taskId);
     return;
   }
+
   if (taskCompletedBtn) {
     status.textContent = "Completed";
     status.disabled = true;
@@ -224,4 +224,12 @@ taskNotesContainer.addEventListener("click", function (e) {
     changeStatus(currentStatus, taskId);
     return;
   }
+});
+taskNotesContainer.addEventListener("change", async function (e) {
+  if (!e.target.classList.contains("file-upload-btn")) return;
+
+  const taskCard = e.target.closest(".task-card");
+  const taskId = taskCard.dataset.taskId;
+  const files = e.target.files;
+  console.log(files);
 });
