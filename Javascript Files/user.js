@@ -16,15 +16,75 @@ const logOutBtn = document.querySelector(".logout-btn");
 const taskContainer = document.querySelector(".task-list");
 const taskNotesContainer = document.querySelector(".task-list-section");
 
-// const getDisableStatusBtn = function (task) {
-//   if (task.status === "completed") return "disabled";
-//   if (
-//     task.status === "in-progress" ||
-//     task.status === "on-hold" ||
-//     task.status === "pending"
-//   )
-//     return "";
-// };
+const getUploadedFiles = async function (taskId) {
+  try {
+    // get Task details by task Id
+    const { data: files } = await supabase
+      .from("user_submitted_files")
+      .select("*")
+      .eq("task_id", taskId);
+    const file = files[0];
+
+    // Get image using signedUrl method
+    const { data } = await supabase.storage
+      .from("user_submitted_files")
+      .createSignedUrl(file.file_path, 3600);
+    console.log(data.signedUrl);
+
+    // Get image using blob method
+    // const { data: blob } = await supabase.storage
+    //   .from("user_submitted_files")
+    //   .download(file.file_path);
+    // const url = URL.createObjectURL(blob);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const uploadProof = async function (file, taskId) {
+  const selectedFile = file[0];
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const safeFileName = selectedFile.name
+      .replace(/\s+/g, "_")
+      .replace(/[^\w.-]/g, "");
+
+    const filePath = `${user.id}/${Date.now()}_${safeFileName}`;
+
+    const { data, error } = await supabase.storage
+      .from("user_submitted_files")
+      .upload(filePath, selectedFile);
+
+    if (error) {
+      console.error(error);
+      alert("Upload failed");
+      return;
+    }
+
+    const task_return = await supabase
+      .from("user_submitted_files")
+      .insert({
+        task_id: taskId,
+        file_path: filePath,
+        uploaded_by: user.id,
+      })
+      .select();
+
+    const proofStatusUpload = await supabase
+      .from("tasks")
+      .update({ proof_uploaded: "yes" })
+      .eq("id", taskId)
+      .select();
+    console.log(proofStatusUpload);
+    // getUploadedFiles(taskId, task_return.data[0].file_path);
+    return "true";
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const getCompletedBtnStatus = function (task) {
   if (
@@ -152,9 +212,9 @@ ${task.notes
                 </div>
 
                 <div class="task-files">
-                  <label class="upload-btn">
+                  <label class="upload-btn ${task.proof_uploaded === "yes" && task.status === "completed" ? "disabled" : ""}">
                     Upload Proof
-                    <input class="file-upload-btn" type="file" multiple hidden />
+                    <input class="file-upload-btn" type="file" multiple hidden ${task.proof_uploaded === "yes" && task.status === "completed" ? "disabled" : ""}/>
                   </label>
                 </div>
      </div>`,
@@ -200,6 +260,8 @@ taskNotesContainer.addEventListener("click", function (e) {
   const status = taskCard.querySelector(".status-btn");
   const currentStatus = taskCard.querySelector(".status");
 
+  if (addNoteBtn) addNote(input, taskId, taskNotes);
+
   if (statustBtn && statustBtn.textContent === "Start Task") {
     currentStatus.textContent = "in-progress";
     status.textContent = "Hold Task";
@@ -225,11 +287,16 @@ taskNotesContainer.addEventListener("click", function (e) {
     return;
   }
 });
+
 taskNotesContainer.addEventListener("change", async function (e) {
   if (!e.target.classList.contains("file-upload-btn")) return;
-
   const taskCard = e.target.closest(".task-card");
   const taskId = taskCard.dataset.taskId;
   const files = e.target.files;
-  console.log(files);
+  const fileBtn = taskCard.querySelector(".file-upload-btn");
+  const fileLabel = taskCard.querySelector(".upload-btn");
+  const currentStatus = taskCard.querySelector(".status");
+  uploadProof(files, taskId);
+  fileBtn.disabled = true;
+  fileLabel.classList.add("disabled");
 });
