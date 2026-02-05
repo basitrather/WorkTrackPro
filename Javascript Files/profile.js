@@ -83,7 +83,71 @@ const taskSectionBtn = document.querySelector(".tasks");
 const totalUsers = document.querySelector(".totalUsers");
 const createTaskBtn = document.querySelector(".task-create-btn");
 const taskListContainer = document.querySelector(".task-list");
+const verifyTaskModalWindow = document.querySelector(".verify-modal-overlay");
+const ProofImg = document.querySelector(".verify-proof-image");
 let selectedEmail = "";
+let currentTaskId = "";
+
+//Get images from Storage
+const getUploadedFiles = async function (taskId) {
+  try {
+    let { data: tasks, error } = await supabase
+      .from("tasks")
+      .select("proof_uploaded")
+      .eq("id", currentTaskId);
+
+    // if (tasks[0].proof_uploaded === "no") {
+    //   const promptMsg = document.querySelector("h2");
+    //   promptMsg.textContent = "Proof not uploaded yet!";
+    //   ProofImg.replaceWith(promptMsg);
+    //   return;
+    // }
+    // get Task details by task Id
+    const { data: files } = await supabase
+      .from("user_submitted_files")
+      .select("*")
+      .eq("task_id", currentTaskId);
+
+    const file = files[0];
+
+    // Get image using signedUrl method
+    const { data } = await supabase.storage
+      .from("user_submitted_files")
+      .createSignedUrl(file.file_path, 3600);
+    console.log(data.signedUrl);
+
+    ProofImg.src = data.signedUrl;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//Verify the task or reject task Function
+const taskVerification = async function (verificationStatus) {
+  const verifyBtn = taskListContainer.querySelector(
+    `.verify-task-btn[data-taskId="${currentTaskId}"]`,
+  );
+  try {
+    //Update verification status
+    const { data } = await supabase
+      .from("tasks")
+      .update({ task_verification: verificationStatus })
+      .eq("id", currentTaskId)
+      .select();
+    // Update UI
+    verifyTaskModalWindow.classList.remove("active");
+    if (data[0].task_verification === "accepted") {
+      verifyBtn.textContent = "Verified";
+      verifyBtn.classList.add("verified");
+    }
+    if (data[0].task_verification === "rejected") {
+      verifyBtn.textContent = "Rejected";
+      verifyBtn.classList.add("rejected");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // get selected users upon selecting Function
 function getSelectedUsers() {
@@ -91,7 +155,17 @@ function getSelectedUsers() {
     (cb) => cb.value,
   );
 }
-
+//Reject button styling
+const verificationBtnContent = function (task) {
+  if (task === "accepted") return "Verified";
+  if (task === "rejected") return "Rejected";
+  if (task === "pending") return "Verify task";
+};
+const verificationClass = function (task) {
+  if (task === "accepted") return "verified";
+  if (task === "rejected") return "rejected";
+  if (task === "pending") return "";
+};
 // Create Tasks dynamically function
 const createTaskHTML = function (task) {
   if (
@@ -111,6 +185,8 @@ const createTaskHTML = function (task) {
           <span class="status ${task.status}">
             ${task.status}
           </span>
+          <button class="verify-task-btn ${verificationClass(task.task_verification)}" data-taskId="${task.id}" ${task.task_verification === "accepted" || task.task_verification === "rejected" ? "disabled" : ""}>${verificationBtnContent(task.task_verification)}</button>
+
         </div>
       </div>
       <p class="task-desc">${task.description}</p>
@@ -517,14 +593,21 @@ searchBar.addEventListener("input", () => {
 sortBtn.addEventListener("change", function (e) {
   sortUsers(sortBtn.value);
 });
+
 displayUsersContainer.addEventListener("click", function (e) {
   const selectedEditBtn = e.target.closest(".edit-user");
   const selectedRow = e.target.closest(".user-row");
   const statusSelect = e.target.closest(".toggle-btn");
   selectedEmail = selectedRow.querySelector(".contact-info");
+  const verifyClicked = e.target.closest(".verify-task-btn");
+  const verifyBtn = document.querySelector(".verify-task-btn");
+
+  if (verifyClicked) console.log(verifyBtn);
+
   if (statusSelect) activateDecactivate(statusSelect, selectedEmail);
-  if (selectedEditBtn)
-    modalWindowContainer.classList.add("toggle-modal-overlay");
+  if (verifyBtn)
+    if (selectedEditBtn)
+      modalWindowContainer.classList.add("toggle-modal-overlay");
 });
 modalWindowCloseBtn.addEventListener("click", function () {
   modalWindowContainer.classList.remove("toggle-modal-overlay");
@@ -548,4 +631,32 @@ updateProfileBtn.addEventListener("click", function () {
 createTaskBtn.addEventListener("click", function (e) {
   e.preventDefault();
   createTask();
+});
+taskListContainer.addEventListener("click", function (e) {
+  const taskContainer = e.target.closest(".task-card");
+  const verifyClicked = e.target.closest(".verify-task-btn");
+  const verifyBtn = taskContainer.querySelector(".verify-task-btn");
+
+  if (!verifyClicked) return;
+
+  verifyTaskModalWindow.classList.add("active");
+  currentTaskId = verifyBtn.dataset.taskid;
+});
+verifyTaskModalWindow.addEventListener("click", function (e) {
+  const closeWindow = e.target.closest(".verify-modal-close");
+  const verifyTask = e.target.closest(".verify-confirm-btn");
+  const rejectTask = e.target.closest(".verify-reject-btn");
+
+  if (closeWindow) {
+    verifyTaskModalWindow.classList.remove("active");
+    ProofImg.src = "#";
+  }
+  if (verifyTask) {
+    taskVerification("accepted", "Verified");
+    ProofImg.src = "#";
+  }
+  if (rejectTask) {
+    taskVerification("rejected", "Rejected");
+    ProofImg.src = "#";
+  }
 });
